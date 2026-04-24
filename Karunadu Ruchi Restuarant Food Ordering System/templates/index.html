@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karunadu Ruchi — Order food with joy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --coral: #e55e5e;
+            --orange: #fc8019;
+            --ink: #1c1c1c;
+            --muted: #5c5c5c;
+            --white: #fff;
+            --cream: #fff8f3;
+            --header-h: 72px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background: var(--white);
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* —— Header (clean white bar like reference) —— */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--header-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 clamp(1.25rem, 4vw, 3rem);
+            background: var(--white);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            color: var(--ink);
+        }
+
+        .logo span {
+            color: var(--coral);
+        }
+
+        .nav {
+            display: none;
+            gap: clamp(1.25rem, 3vw, 2.5rem);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .nav a:hover {
+            color: var(--orange);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-ghost {
+            display: none;
+            padding: 0.55rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1.5px solid var(--ink);
+            border-radius: 999px;
+            background: transparent;
+            color: var(--ink);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-ghost:hover {
+            background: var(--ink);
+            color: var(--white);
+        }
+
+        .btn-primary,
+        a.btn-primary {
+            display: inline-block;
+            padding: 0.6rem 1.35rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--coral), var(--orange));
+            color: var(--white);
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(229, 94, 94, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover,
+        a.btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(252, 128, 25, 0.35);
+            color: var(--white);
+        }
+
+        .menu-toggle {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--ink);
+            border-radius: 1px;
+        }
+
+        @media (min-width: 900px) {
+            .nav { display: flex; }
+            .btn-ghost { display: inline-block; }
+            .menu-toggle { display: none; }
+        }
+
+        .mobile-nav {
+            display: none;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem clamp(1.25rem, 4vw, 3rem) 1.25rem;
+            background: var(--cream);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .mobile-nav.is-open {
+            display: flex;
+        }
+
+        .mobile-nav a {
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        /* —— Hero —— */
+        .hero {
+            position: relative;
+            min-height: calc(100vh - var(--header-h));
+            min-height: calc(100dvh - var(--header-h));
+            padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 4vw, 3rem) 4rem;
+            overflow: hidden;
+            background: linear-gradient(145deg, #d94e5c 0%, var(--coral) 35%, #f07840 70%, var(--orange) 100%);
+        }
+
+        .hero-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .hero-blob--1 {
+            width: min(50vw, 380px);
+            height: min(50vw, 380px);
+            background: #fff;
+            top: -10%;
+            right: -5%;
+        }
+
+        .hero-blob--2 {
+            width: min(40vw, 300px);
+            height: min(40vw, 300px);
+            background: #ffe0c7;
+            bottom: 10%;
+            left: -8%;
+        }
+
+        .hero-grid {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        @media (min-width: 960px) {
+            .hero-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+        }
+
+        .hero-visual {
+            position: relative;
+            min-height: 280px;
+            order: -1;
+        }
+
+        @media (min-width: 960px) {
+            .hero-visual { order: 0; min-height: 420px; }
+        }
+
+        .float-card {
+            position: absolute;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .float-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .float-card--a {
+            width: 58%;
+            aspect-ratio: 4/5;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+
+        .float-card--b {
+            width: 52%;
+            aspect-ratio: 1;
+            bottom: 0;
+            right: 0;
+            z-index: 3;
+        }
+
+        .float-card--c {
+            width: 38%;
+            aspect-ratio: 1;
+            top: 38%;
+            right: 8%;
+            z-index: 1;
+            opacity: 0.95;
+        }
+
+        .hero-copy {
+            text-align: center;
+        }
+
+        @media (min-width: 960px) {
+            .hero-copy { text-align: left; }
+        }
+
+        .hero-copy h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: clamp(2.25rem, 5.5vw, 3.5rem);
+            line-height: 1.12;
+            color: var(--white);
+            text-shadow: 0 2px 24px rgba(0, 0, 0, 0.12);
+            margin-bottom: 1rem;
+        }
+
+        .hero-copy p.lead {
+            font-size: clamp(1rem, 2vw, 1.125rem);
+            color: rgba(255, 255, 255, 0.95);
+            max-width: 32rem;
+            margin: 0 auto 1.75rem;
+        }
+
+        @media (min-width: 960px) {
+            .hero-copy p.lead { margin-left: 0; }
+        }
+
+        @media (min-width: 960px) {
+            .search-strip { margin-left: 0; margin-right: 0; }
+        }
+
+        .search-field {
+            flex: 1 1 200px;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.85rem 1rem;
+            border: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: var(--ink);
+        }
+
+        .search-field:first-child {
+            border-bottom: 1px solid #eee;
+        }
+
+        @media (min-width: 520px) {
+            .search-field:first-child {
+                border-bottom: none;
+                border-right: 1px solid #eee;
+            }
+        }
+
+        .search-field input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font: inherit;
+            min-width: 0;
+        }
+
+        .search-field input::placeholder {
+            color: #9a9a9a;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            opacity: 0.55;
+        }
+
+        @media (min-width: 960px) {
+            .hero-ctas { justify-content: flex-start; }
+        }
+
+        .btn-white,
+        a.btn-white {
+            display: inline-block;
+            padding: 0.75rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 999px;
+            background: var(--white);
+            color: var(--coral);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-white:hover,
+        a.btn-white:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .play-hit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.22);
+            border: 2px solid rgba(255, 255, 255, 0.55);
+            color: var(--white);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .play-hit:hover {
+            background: rgba(255, 255, 255, 0.32);
+            transform: scale(1.05);
+        }
+
+        .play-hit svg {
+            margin-left: 4px;
+        }
+
+        /* —— Service cards —— */
+        .section {
+            padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 4vw, 3rem);
+        }
+
+        .section--cream {
+            background: var(--cream);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.5rem, 3vw, 1.85rem);
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+
+        .section-sub {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .cards {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: grid;
+            gap: 1.25rem;
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 720px) {
+            .cards { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem 1.5rem 1.25rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: var(--orange);
+            margin-bottom: 0.35rem;
+        }
+
+        .card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .card .sub {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 1rem;
+        }
+
+        .card-img-wrap {
+            flex: 1;
+            min-height: 140px;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: #f0f0f0;
+        }
+
+        .card-img-wrap img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-arrow {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--orange);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+
+        .card:hover .card-arrow {
+            transform: translateX(4px);
+        }
+
+        /* About + contact */
+        .split {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .split { grid-template-columns: 1fr 1fr; }
+        }
+
+        .split h2 {
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .split p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .contact-block {
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(229, 94, 94, 0.08), rgba(252, 128, 25, 0.08));
+        }
+
+        .contact-block a {
+            color: var(--orange);
+            font-weight: 600;
+        }
+
+        .site-footer {
+            padding: 1.5rem clamp(1.25rem, 4vw, 3rem);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--muted);
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="{{ url_for('index') }}" class="logo">KARUNADU <span>RUCHI</span></a>
+        <nav class="nav" aria-label="Primary">
+            <a href="#about">About</a>
+            <a href="#recipes">Our recipes</a>
+            <a href="{{ url_for('login') }}">Menu</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="header-actions">
+            <a href="{{ url_for('login') }}" class="btn-ghost">Sign in</a>
+            <a href="{{ url_for('login') }}" class="btn-primary">Order now</a>
+            <button type="button" class="menu-toggle" aria-label="Open menu" id="navToggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <a href="#about">About</a>
+        <a href="#recipes">Our recipes</a>
+        <a href="{{ url_for('login') }}">Menu</a>
+        <a href="#contact">Contact</a>
+        <a href="{{ url_for('login') }}">Sign in</a>
+    </div>
+
+    <main>
+        <section class="hero" aria-label="Welcome">
+            <div class="hero-blob hero-blob--1" aria-hidden="true"></div>
+            <div class="hero-blob hero-blob--2" aria-hidden="true"></div>
+            <div class="hero-grid">
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="float-card float-card--a">
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80" alt="" width="400" height="500" loading="lazy">
+                    </div>
+                    <div class="float-card float-card--b">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" alt="" width="400" height="400" loading="lazy">
+                    </div>
+                    <div class="float-card float-card--c">
+                        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400&q=80" alt="" width="300" height="300" loading="lazy">
+                    </div>
+                </div>
+                <div class="hero-copy">
+                    <h1>Taste the joy of madness</h1>
+                    <p class="lead">Welcome to Karunadu Ruchi — fresh food and drinks made with care, delivered fast. Pick a spot, search what you crave, and we will bring the feast.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section--cream" id="menu-section" aria-labelledby="services-heading">
+            <h2 class="section-title" id="services-heading">What you can order</h2>
+            <p class="section-sub">Deals that feel as good as the first bite — unique to Karunadu Ruchi.</p>
+            <div class="cards">
+                <article class="card">
+                    <div class="card-tag">UP TO 10% OFF</div>
+                    <h3>Foods available</h3>
+                    <p class="sub">From our kitchen</p>
+                    <div class="card-img-wrap">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRANnMyPxd4yi2amdmsEMa39CtoZKrTWKAAAw&s" alt="Breakfast bowl" loading="lazy">
+                    </div>
+                    <div class="card-footer">
+                        <span style="font-size:0.85rem;color:var(--muted);">Curries, biryanis &amp; more</span>
+                        <a href="{{ url_for('login') }}" class="card-arrow" aria-label="Order food">→</a>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="card-tag">UP TO 20% OFF</div>
+                    <h3>Thirst quenchers</h3>
+                    <p class="sub">Shakes,juices &amp; more</p>
+                    <div class="card-img-wrap">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXhwb5brOwJIOd6xFL_ur14JQn1oSyETR1Ug&s" alt="Iced drink" loading="lazy">
+                    </div>
+                    <div class="card-footer">
+                        <span style="font-size:0.85rem;color:var(--muted);">The cool energy</span>
+                        <a href="{{ url_for('login') }}" class="card-arrow" aria-label="Order drinks">→</a>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="card-tag"> UP TO 5% OFF</div>
+                    <h3>Snacks Spot</h3>
+                    <p class="sub">End on a high</p>
+                    <div class="card-img-wrap">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAAAzZUjgmfocdNvKloUDlJIwQAOh7blFCQw&s" alt="Dessert" loading="lazy">
+                    </div>
+                    <div class="card-footer">
+                        <span style="font-size:0.85rem;color:var(--muted);">Samosa,Vadapav &amp; others</span>
+                        <a href="{{ url_for('login') }}" class="card-arrow" aria-label="Order desserts">→</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="about">
+            <div class="split">
+                <div id="recipes">
+                    <h2>Our recipes</h2>
+                    <p>We balance bold Karnataka-inspired flavors with everyday comfort food — the same spirit as small-batch soda: honest ingredients, zero shortcuts, and a little joyful chaos in every recipe.</p>
+                </div>
+                <div class="contact-block" id="contact">
+                    <h2>Contact</h2>
+                    <p>Connect us through — <a href="mailto:hello@karunaduruchi.example">karunaduruchi2026@gmail.com</a></p>
+                    <p style="margin-top:0.75rem;">Ready to order? <a href="{{ url_for('login') }}">Sign in with your phone</a> and jump to the menu.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        © {{ now_year }} Karunadu Ruchi · Crafted for hungry hearts
+    </footer>
+
+    <script>
+        (function () {
+            var t = document.getElementById('navToggle');
+            var m = document.getElementById('mobileNav');
+            if (!t || !m) return;
+            t.addEventListener('click', function () {
+                var open = m.classList.toggle('is-open');
+                m.setAttribute('aria-hidden', open ? 'false' : 'true');
+                t.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        })();
+    </script>
+</body>
+</html>

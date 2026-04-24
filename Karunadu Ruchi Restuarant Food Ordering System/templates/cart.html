@@ -1,0 +1,63 @@
+<<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { background-color: #ff6f3c; }
+        .navbar-brand, .navbar-brand:hover { color: white; font-weight: bold; }
+        .cart-container { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .btn-primary { background-color: #ff6f3c; border: none; }
+        .btn-primary:hover { background-color: #e55a2a; }
+        .btn-success { background-color: #28a745; border: none; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('menu') }}">🍔 Karunadu Ruchi</a>
+            <a href="{{ url_for('menu') }}" class="btn btn-outline-light">Continue Shopping</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="cart-container">
+            <h2>Your Cart</h2>
+            {% if cart %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Price (₹)</th>
+                            <th>Quantity</th>
+                            <th>Subtotal (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>₹{{ "%.2f"|format(item.price) }}</td>
+                            <td>{{ item.qty }}</td>
+                            <td>₹{{ "%.2f"|format(item.price * item.qty) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-active">
+                            <td colspan="3" class="text-end"><strong>Total</strong></td>
+                            <td><strong>₹{{ "%.2f"|format(total) }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <form method="post" action="{{ url_for('place_order') }}">
+                <button type="submit" class="btn btn-success">Place Order</button>
+            </form>
+            {% else %}
+            <p class="text-center text-muted">Your cart is empty. <a href="{{ url_for('menu') }}">Add some items</a></p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
